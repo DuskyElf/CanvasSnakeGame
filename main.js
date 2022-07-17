@@ -3,16 +3,18 @@
 // Canvas Initializations
 const canvas = document.getElementById("game")
 const ctx = canvas.getContext('2d')
+const scoreEle = document.getElementById("score")
 const windowSize = Math.min(window.innerWidth, window.innerHeight)
 canvas.width = windowSize * 0.85
 canvas.height = windowSize * 0.85
 
 // Game Settings
-const speed = 5
+const speed = 10
 const tileCount = 20
 const tileSize = canvas.width / tileCount - 2
 
 let foodPos = null
+let score = 0
 
 // -------------- Classes ---------------
 
@@ -34,14 +36,6 @@ class Snake {
     }
 
     update() {
-        // Drawing the food
-        ctx.fillStyle = '#FF8BA0'
-        ctx.fillRect(
-            foodPos.x * tileSize + 1,
-            foodPos.y * tileSize + 1,
-            tileSize, tileSize
-        )
-
         // Drawing the Snake
         this.body.forEach((part, index) => {
             // Coloring the part based on if it's head or not
@@ -55,6 +49,14 @@ class Snake {
                 tileSize,tileSize
             )
         })
+
+        // Drawing the food
+        ctx.fillStyle = '#FF8BA0'
+        ctx.fillRect(
+            foodPos.x * tileSize + 1,
+            foodPos.y * tileSize + 1,
+            tileSize, tileSize
+        )
 
         // Moving the snake parts
         const newHeadPlace = {
@@ -78,6 +80,10 @@ function spawnFood(){
 
 // Game loop
 function main(){
+    // Updating the Score
+    if (snake.velocity.x!=0 || snake.velocity.y!=0) score += 1
+    scoreEle.innerText = score
+
     // Clearing the screen
     ctx.fillStyle = '#222831'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
@@ -89,6 +95,8 @@ function main(){
     // Checking for food
     if (snake.body[0].x == foodPos.x && snake.body[0].y == foodPos.y){
         snake.grow()
+        score += 500
+        scoreEle.innerText = score
         spawnFood()
     }
 

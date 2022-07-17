@@ -15,10 +15,17 @@
                 box-shadow: black 20px 10px 50px;
                 border-radius: 10px;
             }
+            .content {
+                font-size: 175%;
+                font-family: cursive;
+            }
         </style>
     </head>
     <body>
-        <h1>Snake Game</h1>
+        <span class="content"> Snake Game</span>
+        <span class="content">
+            Score: <span id="score">0</span>
+        </span>
 
         <canvas id="game"></canvas>
         <script src="main.js"></script>
