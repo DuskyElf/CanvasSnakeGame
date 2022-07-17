@@ -100,7 +100,6 @@ function main(){
             snake.body[0].y < 0 ||
             snake.body[0].y > tileCount
         ) speed = 0
-    
     // Checking if the Snake hit itself
     snake.body.forEach((part, index) => {
         if (index != 0){
