@@ -1,2 +1,2 @@
 # CanvasSnakeGame
-## Would be available online on Github pages
+## Online on github pages at: https://duskyelf.github.io/CanvasSnakeGame
