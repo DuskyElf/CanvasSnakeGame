@@ -15,6 +15,7 @@ const tileSize = canvas.width / tileCount - 2
 
 let foodPos = null
 let score = 0
+let running = true
 
 // -------------- Classes ---------------
 
@@ -26,6 +27,7 @@ class Snake {
         ]
         
         this.velocity = {x: 0, y: 0}
+        this.currentVelocity = {x: 0, y: 0}
     }
 
     grow() {
@@ -57,6 +59,7 @@ class Snake {
             x: this.body[0].x + this.velocity.x,
             y: this.body[0].y + this.velocity.y
         }
+        this.currentVelocity = this.velocity
         this.body.unshift(newHeadPlace)
         this.body.pop()
     }
@@ -75,6 +78,7 @@ class Particle {
     }
 
     draw() {
+        // Drawing the Particle
         ctx.save()
         ctx.globalAlpha = this.alpha
         ctx.beginPath()
@@ -86,6 +90,8 @@ class Particle {
 
     update() {
         this.draw()
+        // Moving the particle
+        // And Making it interact with the friction
         this.velocity.x *= friction
         this.velocity.y *= friction
         this.x = this.x + this.velocity.x
@@ -144,16 +150,17 @@ function main(){
             snake.body[0].x > tileCount ||
             snake.body[0].y < 0 ||
             snake.body[0].y > tileCount
-        ) speed = 0
+        ) running = false
     // Checking if the Snake hit itself
     snake.body.forEach((part, index) => {
         if (index != 0){
         if (snake.body[0].x == part.x && snake.body[0].y == part.y){
-            speed = 0
+            running = false
             return
         }}
     })
 
+    if (!running) return
     // Looping Logic - runs `speed` times a second
     setTimeout(main, 1000 / speed)
 }
@@ -185,7 +192,7 @@ function animate(){
         }
     })
     
-
+    if (!running) return
     // Looping Logic - runs indefinatly
     requestAnimationFrame(animate)
 }
@@ -193,16 +200,16 @@ function animate(){
 // KeyBoard Events
 addEventListener("keydown", event=>{
     if (event.key == 'w'){
-        if (snake.velocity.y == 1) return
+        if (snake.currentVelocity.y == 1) return
         snake.velocity = {x: 0, y: -1}
     }else if (event.key == 'a'){
-        if (snake.velocity.x == 1) return
+        if (snake.currentVelocity.x == 1) return
         snake.velocity = {x: -1, y: 0}
     }else if (event.key == 's'){
-        if (snake.velocity.y == -1) return
+        if (snake.currentVelocity.y == -1) return
         snake.velocity = {x: 0, y: 1}
     }else if (event.key == 'd'){
-        if (snake.velocity.x == -1) return
+        if (snake.currentVelocity.x == -1) return
         snake.velocity = {x: 1, y: 0}
     }
 })
