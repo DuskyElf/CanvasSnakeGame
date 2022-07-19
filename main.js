@@ -82,9 +82,8 @@ class Particle {
         ctx.save()
         ctx.globalAlpha = this.alpha
         ctx.beginPath()
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2, false)
         ctx.fillStyle = this.color
-        ctx.fill()
+        ctx.fillRect(this.x, this.y, this.radius*2, this.radius*2)
         ctx.restore()
     }
 
