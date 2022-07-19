@@ -28,14 +28,14 @@ class Snake {
         this.velocity = {x: 0, y: 0}
     }
 
-    grow(){
+    grow() {
         // Adding a Dummy Part to the snake
         // Which would get removed in the update
         // (Instead of the actual last part of the snake)
         snake.body.push({x: -1, y: -1})
     }
 
-    update() {
+    draw() {
         // Drawing the Snake
         this.body.forEach((part, index) => {
             // Coloring the part based on if it's head or not
@@ -49,15 +49,9 @@ class Snake {
                 tileSize,tileSize
             )
         })
+    }
 
-        // Drawing the food
-        ctx.fillStyle = '#FF8BA0'
-        ctx.fillRect(
-            foodPos.x * tileSize + 1,
-            foodPos.y * tileSize + 1,
-            tileSize, tileSize
-        )
-
+    update() {
         // Moving the snake parts
         const newHeadPlace = {
             x: this.body[0].x + this.velocity.x,
@@ -68,7 +62,40 @@ class Snake {
     }
 }
 
+const friction = 0.98
+// Particle Model
+class Particle {
+    constructor(x, y, radius, color, velocity) {
+        this.x = x
+        this.y = y
+        this.radius = radius
+        this.color = color
+        this.velocity = velocity
+        this.alpha = 1
+    }
+
+    draw() {
+        ctx.save()
+        ctx.globalAlpha = this.alpha
+        ctx.beginPath()
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2, false)
+        ctx.fillStyle = this.color
+        ctx.fill()
+        ctx.restore()
+    }
+
+    update() {
+        this.draw()
+        this.velocity.x *= friction
+        this.velocity.y *= friction
+        this.x = this.x + this.velocity.x
+        this.y = this.y + this.velocity.y
+        this.alpha -= 0.02
+    }
+}
+
 const snake = new Snake()
+const particles = []
 
 function spawnFood(){
     // Setting Food's position to a random position
@@ -78,23 +105,33 @@ function spawnFood(){
     foodPos = {x: x, y: y}
 }
 
-// Game loop
+// GameState Loop
 function main(){
     // Updating the Score
     if (snake.velocity.x!=0 || snake.velocity.y!=0) score += 1
     scoreEle.innerText = score
 
-    // Clearing the screen
-    ctx.fillStyle = '#222831'
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
-
-    // Drawing Everything
+    // Snake Updates
     snake.update()
 
     // Colision Detection
     // Checking for food
     if (snake.body[0].x == foodPos.x && snake.body[0].y == foodPos.y){
         snake.grow()
+
+        for(let i = 0; i < (Math.random() * (20 - 15) + 5); i++){
+            particles.push(new Particle(
+                (foodPos.x * tileSize) + tileSize / 2,
+                (foodPos.y * tileSize) + tileSize / 2,
+                Math.random() * 2,
+                '#FF8BA0',
+                {
+                    x: (Math.random() - 0.5) * (Math.random() * 8),
+                    y: (Math.random() - 0.5) * (Math.random() * 8)
+                }
+            ))
+        }
+
         score += 500
         scoreEle.innerText = score
         spawnFood()
@@ -117,7 +154,40 @@ function main(){
         }}
     })
 
+    // Looping Logic - runs `speed` times a second
     setTimeout(main, 1000 / speed)
+}
+
+// Animation Loop
+function animate(){
+    // Clearing the screen
+    ctx.fillStyle = '#222831'
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+    // Drawing the snake
+    snake.draw()
+
+    // Drawing the food
+    ctx.fillStyle = '#FF8BA0'
+    ctx.fillRect(
+        foodPos.x * tileSize + 1,
+        foodPos.y * tileSize + 1,
+        tileSize, tileSize
+    )
+
+    // Updating Particles
+    particles.forEach((particle, index) => {
+        if (particle.alpha <= 0){
+            particles.splice(index, 1)
+        }
+        else {
+            particle.update()
+        }
+    })
+    
+
+    // Looping Logic - runs indefinatly
+    requestAnimationFrame(animate)
 }
 
 // KeyBoard Events
@@ -139,3 +209,4 @@ addEventListener("keydown", event=>{
 
 spawnFood()
 main()
+animate()
