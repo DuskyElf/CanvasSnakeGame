@@ -4,7 +4,10 @@
 const canvas = document.getElementById("game")
 const ctx = canvas.getContext('2d')
 const scoreEle = document.getElementById("score")
+const restartMenu = document.getElementById("restartMenu")
+const endScore = document.getElementById("endScore")
 const windowSize = Math.min(window.innerWidth, window.innerHeight)
+restartMenu.style.display = 'none'
 canvas.width = windowSize * 0.85
 canvas.height = windowSize * 0.85
 
@@ -99,8 +102,8 @@ class Particle {
     }
 }
 
-const snake = new Snake()
-const particles = []
+let snake = new Snake()
+let particles = []
 
 function spawnFood(){
     // Setting Food's position to a random position
@@ -108,6 +111,16 @@ function spawnFood(){
     const y = Math.floor(Math.random() * tileCount)
 
     foodPos = {x: x, y: y}
+}
+
+function restart(){
+    snake = new Snake()
+    particles = []
+    running = true
+    score = 0
+    restartMenu.style.display = 'none'
+    main()
+    animate()
 }
 
 // GameState Loop
@@ -149,12 +162,19 @@ function main(){
             snake.body[0].x > tileCount ||
             snake.body[0].y < 0 ||
             snake.body[0].y > tileCount
-        ) running = false
+        ){
+            running = false
+            endScore.innerText = score
+            restartMenu.style.display = ''
+        }
+        
     // Checking if the Snake hit itself
     snake.body.forEach((part, index) => {
         if (index != 0){
         if (snake.body[0].x == part.x && snake.body[0].y == part.y){
             running = false
+            endScore.innerText = score
+            restartMenu.style.display = ''
             return
         }}
     })
