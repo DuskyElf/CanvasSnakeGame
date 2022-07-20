@@ -123,32 +123,6 @@ function restart(){
     animate()
 }
 
-function checkDistance(pos0, pos1){
-    const distance = Math.sqrt(
-        Math.pow(pos1.x - pos0.x, 2) +
-        Math.pow(pos1.y - pos0.y, 2)
-    )
-    return distance
-}
-
-// Corods for the movement
-const up = {
-    x: canvas.offsetLeft + (canvas.width / 2),
-    y: canvas.offsetTop
-}
-const down = {
-    x: canvas.offsetLeft + (canvas.width / 2),
-    y: canvas.offsetTop + canvas.height
-}
-const left = {
-    x: canvas.offsetLeft,
-    y: canvas.offsetTop + (canvas.height / 2)
-}
-const right = {
-    x: canvas.offsetLeft + canvas.width,
-    y: canvas.offsetTop + (canvas.height / 2)
-}
-
 // Checking for Touch Input
 function testTouch(event){
     // Input coords
@@ -158,42 +132,39 @@ function testTouch(event){
     }
 
     // Calculating the new velocity of the snake
-    // by checking for the nearest movement place
+    // by checking for the nearest side
     let nearest
-    let velocity
-    let direction = 0
+    const distanceUp = touch.y
+    const distanceDown = canvas.height - touch.y
+    const distanceLeft = touch.x
+    const distanceRight = canvas.width - touch.x
 
-    velocity = {x: 0, y: -1}
-    nearest = checkDistance(touch, up)
-    if (checkDistance(touch, down) < nearest){
-        velocity = {x: 0, y: 1}
+    let direction = 0
+    nearest = distanceUp
+    if (distanceDown < nearest){
         direction = 1
-        nearest = checkDistance(touch, down)
-    }
-    if (checkDistance(touch, left) < nearest){
-        velocity = {x: -1, y: 0}
+        nearest = distanceDown
+    } else if (distanceLeft < nearest){
         direction = 2
-        nearest = checkDistance(touch, left)
-    }
-    if (checkDistance(touch, right) < nearest){
-        velocity = {x: 1, y: 0}
+        nearest = distanceLeft
+    } else if (distanceRight < nearest){
         direction = 3
-        nearest = checkDistance(touch, right)
+        nearest = distanceRight
     }
 
     // Security Checks if it's going opposite to the input
     if (direction == 0){
         if (snake.currentVelocity.y == 1) return
-        snake.velocity = velocity
+        snake.velocity = {x: 0, y: -1}
     } else if (direction == 1){
         if (snake.currentVelocity.y == -1) return
-        snake.velocity = velocity
+        snake.velocity = {x: 0, y: 1}
     } else if (direction == 2){
         if (snake.currentVelocity.x == 1) return
-        snake.velocity = velocity
+        snake.velocity = {x: -1, y: 0}
     } else if (direction == 3){
         if (snake.currentVelocity.x == -1) return
-        snake.velocity = velocity
+        snake.velocity = {x: 1, y: 0}
     }
 }
 
