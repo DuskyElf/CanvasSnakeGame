@@ -1,5 +1,5 @@
 # CanvasSnakeGame
-## Online on github pages at: https://duskyelf.github.io/CanvasSnakeGame
+## Online on github pages and cloudflare pages: https://canvassnakegame.pages.dev
 
 ### About it
 - It's a simple Snake Game
